@@ -1,29 +1,60 @@
+# name: Deploy to S3
+
+# on:
+#   push:
+#   branches: 
+#   - main
+
+# jobs:
+# deploy:
+# runs-on: ubuntu-latest
+
+# steps:
+#   - name: Checkout code
+#     uses: actions/checkout@v3
+
+#   - name: Configure AWS credentials
+#     uses: aws-actions/configure-aws-credentials@v2
+#     with:
+#       aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}
+#       aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       aws-region: ap-south-1
+
+#   - name: Upload to S3
+#     run: |
+#       aws s3 sync . s3://amz-s3-web-118218616776-ap-south-1-an --delete
+
+#   - name: Invalidate CloudFront cache
+#     run: |
+#       aws cloudfront create-invalidation --distribution-id E3SPIJ1WFHVL69 --paths "/*"
+
+
 name: Deploy to S3
 
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout code
-    uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  - name: Configure AWS credentials
-    uses: aws-actions/configure-aws-credentials@v2
-    with:
-      aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      aws-region: ap-south-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
 
-  - name: Upload to S3
-    run: |
-      aws s3 sync . s3://amz-s3-web-118218616776-ap-south-1-an --delete
+      - name: Deploy to S3
+        run: |
+          aws s3 sync . s3://amz-s3-web-118218616776-ap-south-1-an --delete
 
-  - name: Invalidate CloudFront cache
-    run: |
-      aws cloudfront create-invalidation --distribution-id E3SPIJ1WFHVL69 --paths "/*"
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id E3SPIJ1WFHVL69 --paths "/*"
